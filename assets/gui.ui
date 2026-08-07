@@ -69,20 +69,11 @@
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
           <item>
-           <widget class="KLineEdit" name="urlInput">
-            <property name="minimumSize">
-             <size>
-              <width>400</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
+           <widget class="QLineEdit" name="urlInput">
             <property name="placeholderText">
              <string>رابط مقطع اليوتيوب...</string>
             </property>
@@ -177,13 +168,6 @@
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
