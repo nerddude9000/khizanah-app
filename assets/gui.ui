@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>768</width>
-    <height>400</height>
+    <width>500</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>768</width>
-    <height>400</height>
+    <width>500</width>
+    <height>300</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>768</width>
-    <height>400</height>
+    <width>500</width>
+    <height>300</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -54,6 +54,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
@@ -77,6 +80,58 @@
             <property name="placeholderText">
              <string>رابط مقطع اليوتيوب...</string>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>64</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>نوع التحميل</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+            <widget class="QWidget" name="">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>30</y>
+               <width>401</width>
+               <height>25</height>
+              </rect>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <property name="rightMargin">
+               <number>8</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="downloadModeRadio_1080p">
+                <property name="text">
+                 <string>فيديو 1080</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="downloadModeRadio_720p">
+                <property name="text">
+                 <string>فيديو 720</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="downloadModeRadio_Audio">
+                <property name="text">
+                 <string>صوتية</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
           <item>
