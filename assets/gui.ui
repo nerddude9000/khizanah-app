@@ -77,6 +77,12 @@
           </property>
           <item>
            <widget class="QLineEdit" name="urlInput">
+            <property name="baseSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="placeholderText">
              <string>رابط مقطع اليوتيوب...</string>
             </property>
@@ -110,9 +116,9 @@
                <number>8</number>
               </property>
               <item>
-               <widget class="QRadioButton" name="downloadModeRadio_1080p">
+               <widget class="QRadioButton" name="downloadModeRadio_Best">
                 <property name="text">
-                 <string>فيديو 1080</string>
+                 <string>فيديو بأحسن جودة</string>
                 </property>
                </widget>
               </item>
@@ -128,6 +134,9 @@
                 <property name="text">
                  <string>صوتية</string>
                 </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
              </layout>
@@ -137,14 +146,22 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>مجلد الخزانة:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="pathLabel">
               <property name="font">
                <font>
-                <pointsize>10</pointsize>
+                <pointsize>8</pointsize>
+                <fontweight>Light</fontweight>
                </font>
               </property>
               <property name="text">
-               <string>مجلد التحميل: /home/downloads</string>
+               <string/>
               </property>
              </widget>
             </item>
