@@ -4,9 +4,13 @@ from os import path
 
 from yt_dlp import YoutubeDL
 
+# TODO: Set it based on OS
 FFMPEG_BINARY_PATH = "./vendor/ffmpeg/ffmpeg"
 DownloadType = Enum("DownloadType", ["m4a", "720p", "best"])
 
+# TODO: Use FFMPEG_BINARY_PATH
+# TODO: Show progress
+# TODO: Show success and error message boxes
 def download(url: str, download_type: DownloadType, download_location: str):
     if download_type == DownloadType["m4a"]:
         dl_format = "139/ba/m4a"
