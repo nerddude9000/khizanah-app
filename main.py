@@ -45,15 +45,15 @@ class MainWindow(QMainWindow):
     def on_download_progress(self, data, is_playlist):
         status = data["status"]
         info = data["info_dict"]
+        msg = self.ui.infoLabel.text()
 
         if status == "finished":
             # This does NOT mean that the entire download is finished, only fragments.
             pass
 
         elif status == "error":
-            self.ui.infoLabel.setText("حدث خلل أثناء التحميل.")
+            msg = "حدث خلل أثناء التحميل."
 
-        # TODO: display current video name
         elif status == "downloading":
             try:
                 progress_percentage = round(
@@ -62,25 +62,28 @@ class MainWindow(QMainWindow):
 
                 self.ui.progressBar.setTextVisible(True)
                 self.ui.progressBar.setValue(progress_percentage)
+
                 if is_playlist:
                     current = info.get("playlist_index")
                     total = info.get("playlist_count")
 
-                    self.ui.infoLabel.setText(
-                        f"جاري تحميل القائمة... ({current} من {total})"
-                    )
+                    msg = f"جاري تحميل القائمة... ({current} من {total})"
                 else:
-                    self.ui.infoLabel.setText("جاري التحميل...")
+                    msg = "جاري التحميل..."
+
             except:  # noqa: E722
                 self.ui.progressBar.setTextVisible(False)
                 self.ui.progressBar.setValue(0)
-                self.ui.infoLabel.setText(
-                    "جاري التحميل... (لم نستطع استخراج مدى اكتمال التحميل)."
-                )
+                msg = "جاري التحميل... (لم نستطع استخراج مدى اكتمال التحميل)."
+
+            finally:
+                if info.get("title"):
+                    msg += f"\n{info.get("title")}"
+
+        self.ui.infoLabel.setText(msg)
 
     def on_finish_download(self, err_code: int):
         self.ui.downloadButton.setDisabled(False)
-        self.ui.progressBar.setTextVisible(False)
 
         if err_code:
             QMessageBox.information(
@@ -93,6 +96,7 @@ class MainWindow(QMainWindow):
 
         else:
             self.ui.infoLabel.setText("انتهى التحميل بنجاح.")
+            self.ui.progressBar.setValue(100)
             QMessageBox.information(self, "تمت العملية بنجاح", "تم تحميل المقطع بنجاح")
 
     def start_download(self):

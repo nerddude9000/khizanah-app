@@ -5,7 +5,6 @@ from enum import Enum
 import yt_dlp
 from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
-from yt_dlp.utils import sanitize_filename
 
 DownloadType = Enum("DownloadType", ["m4a", "720p", "best"])
 download_type_formats: dict[DownloadType, str] = {
