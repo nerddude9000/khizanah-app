@@ -175,7 +175,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pathButton">
+             <widget class="QPushButton" name="changePathButton">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -184,6 +184,19 @@
               </property>
               <property name="text">
                <string>تغيير</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="openPathButton">
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>فتح</string>
               </property>
              </widget>
             </item>

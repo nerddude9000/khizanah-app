@@ -1,5 +1,6 @@
 import configparser
 import os
+import subprocess
 
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
@@ -9,6 +10,7 @@ from ydl import DownloadType, DownloadWorker
 # TODO: The ui is too small, implement a real fix
 os.environ["QT_SCALE_FACTOR"] = "1.5"
 IS_DEBUG = os.getenv("DEBUG", "false")
+IS_LINUX = os.name == "posix"  # macos isn't supported
 CONFIG_PATH = "config.ini"
 
 
@@ -22,7 +24,8 @@ class MainWindow(QMainWindow):
 
     def setup_app(self):
         # TODO: load download path from config file
-        self.ui.pathButton.clicked.connect(lambda: self.update_download_path())
+        self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
+        self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
 
         if IS_DEBUG == "false":
@@ -79,7 +82,6 @@ class MainWindow(QMainWindow):
             self.ui.progressBar.setValue(0)
 
         else:
-            # TODO: Add button for opening the containing folder
             QMessageBox.information(self, "تمت العملية بنجاح", "تم تحميل المقطع بنجاح")
 
     def start_download(self):
@@ -93,7 +95,7 @@ class MainWindow(QMainWindow):
 
         download_path = self.config.get("preferences", "download_path", fallback=None)
 
-        if not download_path or not os.path.exists(download_path):
+        if not download_path:
             QMessageBox.information(
                 self,
                 "هناك خلل",
@@ -137,6 +139,22 @@ class MainWindow(QMainWindow):
             self.config["preferences"] = {"download_path": folder}
             self.save_config()
 
+    def open_download_path(self):
+        download_path = self.config.get("preferences", "download_path", fallback=None)
+
+        if not download_path:
+            QMessageBox.information(
+                self,
+                "هناك خلل",
+                "مجلد الخزانة الذي اخترتموه غير صحيح، قم بتغييره أولا.",
+            )
+            return
+
+        if IS_LINUX:
+            subprocess.Popen(["xdg-open", download_path])
+        else:  # windows, no macos support
+            subprocess.Popen(f'explorer "{download_path}"')
+
     def save_config(self):
         with open("config.ini", "w") as config_file:
             self.config.write(config_file)
@@ -150,8 +168,18 @@ class MainWindow(QMainWindow):
         loaded_download_path = self.config.get(
             "preferences", "download_path", fallback=None
         )
-        if loaded_download_path and os.path.exists(loaded_download_path):
-            self.ui.pathLabel.setText(loaded_download_path)
+
+        if loaded_download_path:
+            if not os.path.exists(loaded_download_path):
+                #
+                # if the path wasn't valid, set it to None here and now.
+                # this is to prevent checking if the path is valid everytime it is used,
+                # which is terrible for performance for something that shouldn't even happen.
+                # so now -when using it- we will just check if it's None.
+                #
+                self.config.set("preferences", "download_path", None)
+            else:
+                self.ui.pathLabel.setText(loaded_download_path)
 
 
 if __name__ == "__main__":

@@ -1,9 +1,17 @@
 import os
 import shutil
+import subprocess
 
 import PyInstaller.__main__
 
+IS_LINUX = os.name == "posix"
+
 if __name__ == "__main__":
+    # first, make sure the ui is synced with assets/gui.ui
+    # TODO: add windows
+    if IS_LINUX:
+        subprocess.call(["sh", "./build_ui.sh"])
+
     PyInstaller.__main__.run(
         [
             "main.py",
@@ -18,16 +26,14 @@ if __name__ == "__main__":
     print("compilation done, now moving necessary files to 'dist/'...")
 
     dist_vendor_path = (
-        "./dist/vendor/ffmpeg/linux/"
-        if os.name == "posix"
-        else "./dist/vendor/ffmpeg/win64/"
+        "./dist/vendor/ffmpeg/linux/" if IS_LINUX else "./dist/vendor/ffmpeg/win64/"
     )
 
     print("moving ffmpeg binary to dist/")
 
     ffmpeg_binary_path = (
         "./vendor/ffmpeg/linux/ffmpeg"
-        if os.name == "posix"
+        if IS_LINUX
         else "./vendor/ffmpeg/win64/ffmpeg.exe"
     )
 
