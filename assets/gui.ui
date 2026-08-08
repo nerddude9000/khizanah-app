@@ -84,7 +84,7 @@
              </size>
             </property>
             <property name="placeholderText">
-             <string>رابط مقطع اليوتيوب...</string>
+             <string>رابط المقطع أو قائمة التشغيل على اليوتيوب...</string>
             </property>
            </widget>
           </item>

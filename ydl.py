@@ -2,8 +2,10 @@
 import os
 from enum import Enum
 
+import yt_dlp
 from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
+from yt_dlp.utils import sanitize_filename
 
 DownloadType = Enum("DownloadType", ["m4a", "720p", "best"])
 download_type_formats: dict[DownloadType, str] = {
@@ -29,39 +31,59 @@ FFMPEG_BINARY_PATH = (
 # progress elements to not show, and the app itself to freeze.
 #
 class DownloadWorker(QThread):
-    progress_signal = Signal(dict)
+    progress_signal = Signal(dict, bool)
     finish_signal = Signal(int)
+    is_playlist = False
 
     def __init__(
         self,
         url: str,
         download_type: DownloadType,
-        download_location: str,
+        download_path: str,
     ) -> None:
         super().__init__()
-        self.options = {
-            "url": url,
-            "download_type": download_type,
-            "download_location": download_location,
-        }
-
-    # TODO: File path handling for playlists (such as creating a new folder for them)
-    def run(self):
-        op = self.options
 
         # init the format variable based on passed type
         # refer to yt-dlp format docs for more information
-        if op["download_type"] not in download_type_formats:
-            raise AssertionError  # should never happen
+        if download_type not in download_type_formats:
+            raise ValueError  # should never happen
 
-        dl_format = download_type_formats.get(op["download_type"])
+        dl_format = download_type_formats.get(download_type)
+
+        self.options = {
+            "url": url,
+            "download_format": dl_format,
+            "download_path": download_path,
+        }
+
+    def _extract_info(self):
+        with yt_dlp.YoutubeDL({"quiet": True, "extract_flat": True}) as ydl:
+            info = ydl.extract_info(self.options["url"], download=False)
+
+        return info
+
+    def run(self):
+        op = self.options
+        template = "%(title)s.%(ext)s"
+
+        try:
+            info = self._extract_info()
+            if bool(info.get("_type") == "playlist" or "entries" in info):
+                template = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+                self.is_playlist = True
+        except:  # noqa: E722
+            self.finish_signal.emit(1)
+            return
 
         with YoutubeDL(
             params={
-                "format": dl_format,
-                "outtmpl": os.path.join(op["download_location"], "%(title)s.%(ext)s"),
+                "format": op["download_format"],
+                "outtmpl": os.path.join(op["download_path"], template),
                 "progress_hooks": [self._hook],
                 "ffmpeg_location": FFMPEG_BINARY_PATH,
+                "ignoreerrors": (  # force stop when single video download fails, don't on playlists
+                    "only_download" if self.is_playlist else False
+                ),
             }
         ) as dl:
             try:
@@ -71,4 +93,4 @@ class DownloadWorker(QThread):
                 self.finish_signal.emit(1)
 
     def _hook(self, data):
-        self.progress_signal.emit(data)
+        self.progress_signal.emit(data, self.is_playlist)

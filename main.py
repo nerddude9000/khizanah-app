@@ -9,7 +9,7 @@ from ydl import DownloadType, DownloadWorker
 
 # TODO: The ui is too small, implement a real fix
 os.environ["QT_SCALE_FACTOR"] = "1.5"
-IS_DEBUG = os.getenv("DEBUG", "false")
+IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # macos isn't supported
 CONFIG_PATH = "config.ini"
 
@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
 
-        if IS_DEBUG == "false":
+        if not IS_DEBUG:
             self.load_config()
 
     def show_initial_load_popup(self):
@@ -42,16 +42,18 @@ class MainWindow(QMainWindow):
 وفقنا الله وإياكم.""",
         )
 
-    def on_progress_download(self, data):
+    def on_download_progress(self, data, is_playlist):
         status = data["status"]
+        info = data["info_dict"]
 
-        # TODO: display video index when downloading playlists
         if status == "finished":
-            self.ui.infoLabel.setText("انتهى التحميل ناجحًا.")
+            # This does NOT mean that the entire download is finished, only fragments.
+            pass
 
         elif status == "error":
             self.ui.infoLabel.setText("حدث خلل أثناء التحميل.")
 
+        # TODO: display current video name
         elif status == "downloading":
             try:
                 progress_percentage = round(
@@ -60,7 +62,15 @@ class MainWindow(QMainWindow):
 
                 self.ui.progressBar.setTextVisible(True)
                 self.ui.progressBar.setValue(progress_percentage)
-                self.ui.infoLabel.setText("جاري التحميل...")
+                if is_playlist:
+                    current = info.get("playlist_index")
+                    total = info.get("playlist_count")
+
+                    self.ui.infoLabel.setText(
+                        f"جاري تحميل القائمة... ({current} من {total})"
+                    )
+                else:
+                    self.ui.infoLabel.setText("جاري التحميل...")
             except:  # noqa: E722
                 self.ui.progressBar.setTextVisible(False)
                 self.ui.progressBar.setValue(0)
@@ -79,8 +89,10 @@ class MainWindow(QMainWindow):
                 f"حدث خلل أثناء التحميل ({err_code})\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.",
             )
             self.ui.progressBar.setValue(0)
+            self.ui.infoLabel.setText("حدث خلل.")
 
         else:
+            self.ui.infoLabel.setText("انتهى التحميل بنجاح.")
             QMessageBox.information(self, "تمت العملية بنجاح", "تم تحميل المقطع بنجاح")
 
     def start_download(self):
@@ -120,7 +132,7 @@ class MainWindow(QMainWindow):
             download_path,
         )
 
-        self.worker.progress_signal.connect(self.on_progress_download)
+        self.worker.progress_signal.connect(self.on_download_progress)
         self.worker.finish_signal.connect(self.on_finish_download)
 
         # Update UI before starting the worker
@@ -155,6 +167,9 @@ class MainWindow(QMainWindow):
             subprocess.Popen(f'explorer "{download_path}"')
 
     def save_config(self):
+        if IS_DEBUG:
+            return
+
         with open("config.ini", "w") as config_file:
             self.config.write(config_file)
 
