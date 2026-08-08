@@ -15,6 +15,7 @@ CONFIG_PATH = "config.ini"
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.config = configparser.ConfigParser()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_app()
@@ -34,7 +35,7 @@ class MainWindow(QMainWindow):
             """أهلا بكم في تطبيق خزانة لتحميل المقاطع والصوتيات.
 
 لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو البدع، إلا إذا كنتم ستحذفونها أو تردون عليها ونحو ذلك.
-ولا يقتصر المحذور على ما ذكرنا، ويُُرجع في هذا لأهل العلم من أهل السنة.
+ولا يقتصر المحذور على ما ذكرنا، ويُُرجع فيه لأهل العلم من أهل السنة.
 
 وفقنا الله وإياكم.""",
         )
@@ -44,7 +45,7 @@ class MainWindow(QMainWindow):
 
         # TODO: display different text for audio and video parts?
         if status == "finished":
-            self.ui.infoLabel.setText("انتهى التحميل ناجحا.")
+            self.ui.infoLabel.setText("انتهى التحميل ناجحًا.")
 
         elif status == "error":
             self.ui.infoLabel.setText("حدث خلل أثناء التحميل.")
@@ -90,9 +91,9 @@ class MainWindow(QMainWindow):
             )
             return
 
-        download_location = self.ui.pathLabel.text()
+        download_path = self.config.get("preferences", "download_path", fallback=None)
 
-        if not os.path.exists(download_location):
+        if not download_path or not os.path.exists(download_path):
             QMessageBox.information(
                 self,
                 "هناك خلل",
@@ -115,7 +116,7 @@ class MainWindow(QMainWindow):
         self.worker = DownloadWorker(
             url,
             download_type,
-            download_location,
+            download_path,
         )
 
         self.worker.progress_signal.connect(self.on_progress_download)
@@ -130,23 +131,26 @@ class MainWindow(QMainWindow):
         self.worker.start()
 
     def update_download_path(self):
-        # TODO: save to a config file
         folder = QFileDialog.getExistingDirectory(self, "أين تريد تنزيل المقاطع؟")
         if folder:
             self.ui.pathLabel.setText(folder)
+            self.config["preferences"] = {"download_path": folder}
+            self.save_config()
+
+    def save_config(self):
+        with open("config.ini", "w") as config_file:
+            self.config.write(config_file)
 
     def load_config(self):
-        config = configparser.ConfigParser()
-
-        if len(config.read(CONFIG_PATH)) == 0:
-            # file doesn't exist (it should get created later in save_config
+        if len(self.config.read(CONFIG_PATH)) == 0:
+            # file doesn't exist (it should get created later in save_config)
             self.show_initial_load_popup()
             return
 
-        loaded_download_path = config.get("preferences", "download_path")
-        if os.path.exists(loaded_download_path):
-            # download path gets stored in the text of this label,
-            # is it a good idea? idk, but it works and prevents data conflicts.
+        loaded_download_path = self.config.get(
+            "preferences", "download_path", fallback=None
+        )
+        if loaded_download_path and os.path.exists(loaded_download_path):
             self.ui.pathLabel.setText(loaded_download_path)
 
 
