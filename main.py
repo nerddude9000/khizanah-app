@@ -23,7 +23,6 @@ class MainWindow(QMainWindow):
         self.setup_app()
 
     def setup_app(self):
-        # TODO: load download path from config file
         self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
@@ -46,7 +45,7 @@ class MainWindow(QMainWindow):
     def on_progress_download(self, data):
         status = data["status"]
 
-        # TODO: display different text for audio and video parts?
+        # TODO: display video index when downloading playlists
         if status == "finished":
             self.ui.infoLabel.setText("انتهى التحميل ناجحًا.")
 

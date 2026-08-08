@@ -6,6 +6,11 @@ from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
 
 DownloadType = Enum("DownloadType", ["m4a", "720p", "best"])
+download_type_formats: dict[DownloadType, str] = {
+    DownloadType["m4a"]: "139/ba/m4a",
+    DownloadType["720p"]: "bv[height=720]+(139/ba/m4a)",
+    DownloadType["best"]: "bv+ba",
+}
 
 #
 # NOTE: if you're building this yourself, you are expected to provide
@@ -46,14 +51,10 @@ class DownloadWorker(QThread):
 
         # init the format variable based on passed type
         # refer to yt-dlp format docs for more information
-        if op["download_type"] == DownloadType["m4a"]:
-            dl_format = "139/ba/m4a"
-        elif op["download_type"] == DownloadType["720p"]:
-            dl_format = "bv[height=720]+(139/ba/m4a)"
-        elif op["download_type"] == DownloadType["best"]:
-            dl_format = "bv+ba"
-        else:
+        if op["download_type"] not in download_type_formats:
             raise AssertionError  # should never happen
+
+        dl_format = download_type_formats.get(op["download_type"])
 
         with YoutubeDL(
             params={
