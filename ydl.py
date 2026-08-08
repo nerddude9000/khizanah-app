@@ -1,13 +1,21 @@
 # This is a basic interface for ytdlp just to make things simpler
+import os
 from enum import Enum
-from os import path
 
 from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
 
-# TODO: Set it based on OS
-FFMPEG_BINARY_PATH = "./vendor/ffmpeg/ffmpeg"
 DownloadType = Enum("DownloadType", ["m4a", "720p", "best"])
+
+#
+# NOTE: if you're building this yourself, you are expected to provide
+# linux and win64 binaries and put them into "./vendor/ffmpeg/<os>/".
+# I can't push these into the repository as they exceed github's 100MB limit.
+# I do however, Inshallah, bundle them into the release executables for ease of use.
+#
+FFMPEG_BINARY_PATH = (
+    "./vendor/ffmpeg/linux/" if os.name == "posix" else "./vendor/ffmpeg/win64/"
+)
 
 
 #
@@ -32,23 +40,27 @@ class DownloadWorker(QThread):
             "download_location": download_location,
         }
 
-    # TODO: Use FFMPEG_BINARY_PATH
     # TODO: File path handling for playlists (such as creating a new folder for them)
     def run(self):
         op = self.options
 
+        # init the format variable based on passed type
+        # refer to yt-dlp format docs for more information
         if op["download_type"] == DownloadType["m4a"]:
             dl_format = "139/ba/m4a"
         elif op["download_type"] == DownloadType["720p"]:
             dl_format = "bv[height=720]+(139/ba/m4a)"
-        else:
+        elif op["download_type"] == DownloadType["best"]:
             dl_format = "bv+ba"
+        else:
+            raise AssertionError  # should never happen
 
         with YoutubeDL(
             params={
                 "format": dl_format,
-                "outtmpl": path.join(op["download_location"], "%(title)s.%(ext)s"),
+                "outtmpl": os.path.join(op["download_location"], "%(title)s.%(ext)s"),
                 "progress_hooks": [self._hook],
+                "ffmpeg_location": FFMPEG_BINARY_PATH,
             }
         ) as dl:
             try:

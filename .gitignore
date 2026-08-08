@@ -1,6 +1,9 @@
 # generated files
 ui_mainwindow.py
 
+# ffmpeg vendor binaries
+vendor/ffmpeg/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

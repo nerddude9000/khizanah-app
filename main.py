@@ -19,7 +19,6 @@ class MainWindow(QMainWindow):
     def setup_app(self):
         # TODO: load download path from config file
         self.ui.pathButton.clicked.connect(lambda: self.update_download_path())
-
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
 
     def on_progress_download(self, data):
@@ -32,6 +31,7 @@ class MainWindow(QMainWindow):
             self.ui.infoLabel.setText("حدث خلل أثناء التحميل.")
         elif status == "downloading":
             try:
+                # TODO: also display progress using progress bar
                 progress_percentage = round(
                     (data["downloaded_bytes"] / data["total_bytes"]) * 100
                 )
@@ -43,6 +43,8 @@ class MainWindow(QMainWindow):
                 )
 
     def on_finish_download(self, err_code: int):
+        self.ui.downloadButton.setDisabled(False)
+
         if err_code:
             QMessageBox.information(
                 self,
@@ -50,7 +52,7 @@ class MainWindow(QMainWindow):
                 f"حدث خلل أثناء التحميل ({err_code})\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.",
             )
         else:
-            # TODO: Add button for opening the file or at least the containing folder
+            # TODO: Add button for opening the containing folder
             QMessageBox.information(self, "تمت العملية بنجاح", "تم تحميل المقطع بنجاح")
 
     def start_download(self):
@@ -72,8 +74,8 @@ class MainWindow(QMainWindow):
             )
             return
 
+        # Set download_type based on selected ui radio
         download_type: DownloadType
-
         if self.ui.downloadModeRadio_Audio.isChecked():
             download_type = DownloadType.m4a
         elif self.ui.downloadModeRadio_720p.isChecked():
@@ -89,7 +91,11 @@ class MainWindow(QMainWindow):
         )
         self.worker.progress_signal.connect(self.on_progress_download)
         self.worker.finish_signal.connect(self.on_finish_download)
+
+        # Update UI before starting the worker
+        self.ui.downloadButton.setDisabled(True)
         self.ui.infoLabel.setText("انتظروا قليلا حتى يبدأ التحميل...")
+
         self.worker.start()
 
     def update_download_path(self):
