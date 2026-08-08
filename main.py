@@ -1,3 +1,4 @@
+import configparser
 import os
 
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
@@ -7,6 +8,8 @@ from ydl import DownloadType, DownloadWorker
 
 # TODO: The ui is too small, implement a real fix
 os.environ["QT_SCALE_FACTOR"] = "1.5"
+IS_DEBUG = os.getenv("DEBUG", "false")
+CONFIG_PATH = "config.ini"
 
 
 class MainWindow(QMainWindow):
@@ -18,9 +21,23 @@ class MainWindow(QMainWindow):
 
     def setup_app(self):
         # TODO: load download path from config file
-        # TODO: display a first time popup for terms of use
         self.ui.pathButton.clicked.connect(lambda: self.update_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
+
+        if IS_DEBUG == "false":
+            self.load_config()
+
+    def show_initial_load_popup(self):
+        QMessageBox.information(
+            self,
+            "شروط الاستخدام",
+            """أهلا بكم في تطبيق خزانة لتحميل المقاطع والصوتيات.
+
+لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو البدع، إلا إذا كنتم ستحذفونها أو تردون عليها ونحو ذلك.
+ولا يقتصر المحذور على ما ذكرنا، ويُُرجع في هذا لأهل العلم من أهل السنة.
+
+وفقنا الله وإياكم.""",
+        )
 
     def on_progress_download(self, data):
         status = data["status"]
@@ -117,6 +134,20 @@ class MainWindow(QMainWindow):
         folder = QFileDialog.getExistingDirectory(self, "أين تريد تنزيل المقاطع؟")
         if folder:
             self.ui.pathLabel.setText(folder)
+
+    def load_config(self):
+        config = configparser.ConfigParser()
+
+        if len(config.read(CONFIG_PATH)) == 0:
+            # file doesn't exist (it should get created later in save_config
+            self.show_initial_load_popup()
+            return
+
+        loaded_download_path = config.get("preferences", "download_path")
+        if os.path.exists(loaded_download_path):
+            # download path gets stored in the text of this label,
+            # is it a good idea? idk, but it works and prevents data conflicts.
+            self.ui.pathLabel.setText(loaded_download_path)
 
 
 if __name__ == "__main__":

@@ -23,7 +23,8 @@ if __name__ == "__main__":
         else "./dist/vendor/ffmpeg/win64/"
     )
 
-    print("moving ffmpeg binary")
+    print("moving ffmpeg binary to dist/")
+
     ffmpeg_binary_path = (
         "./vendor/ffmpeg/linux/ffmpeg"
         if os.name == "posix"
