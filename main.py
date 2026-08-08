@@ -18,6 +18,7 @@ class MainWindow(QMainWindow):
 
     def setup_app(self):
         # TODO: load download path from config file
+        # TODO: display a first time popup for terms of use
         self.ui.pathButton.clicked.connect(lambda: self.update_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
 
@@ -26,9 +27,11 @@ class MainWindow(QMainWindow):
 
         # TODO: display different text for audio and video parts?
         if status == "finished":
-            self.ui.infoLabel.setText("انتهى التحميل.")
+            self.ui.infoLabel.setText("انتهى التحميل ناجحا.")
+
         elif status == "error":
             self.ui.infoLabel.setText("حدث خلل أثناء التحميل.")
+
         elif status == "downloading":
             try:
                 progress_percentage = round(
@@ -56,6 +59,7 @@ class MainWindow(QMainWindow):
                 f"حدث خلل أثناء التحميل ({err_code})\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.",
             )
             self.ui.progressBar.setValue(0)
+
         else:
             # TODO: Add button for opening the containing folder
             QMessageBox.information(self, "تمت العملية بنجاح", "تم تحميل المقطع بنجاح")
@@ -83,8 +87,10 @@ class MainWindow(QMainWindow):
         download_type: DownloadType
         if self.ui.downloadModeRadio_Audio.isChecked():
             download_type = DownloadType.m4a
+
         elif self.ui.downloadModeRadio_720p.isChecked():
             download_type = DownloadType["720p"]
+
         else:
             download_type = DownloadType.best
 
@@ -94,6 +100,7 @@ class MainWindow(QMainWindow):
             download_type,
             download_location,
         )
+
         self.worker.progress_signal.connect(self.on_progress_download)
         self.worker.finish_signal.connect(self.on_finish_download)
 
