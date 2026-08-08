@@ -30,7 +30,7 @@ if __name__ == "__main__":
         else "./vendor/ffmpeg/win64/ffmpeg.exe"
     )
 
-    os.makedirs(dist_vendor_path)
+    os.makedirs(dist_vendor_path, exist_ok=True)
     shutil.copy(ffmpeg_binary_path, dist_vendor_path)
 
     print("Done.")
