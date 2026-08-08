@@ -31,19 +31,23 @@ class MainWindow(QMainWindow):
             self.ui.infoLabel.setText("حدث خلل أثناء التحميل.")
         elif status == "downloading":
             try:
-                # TODO: also display progress using progress bar
                 progress_percentage = round(
                     (data["downloaded_bytes"] / data["total_bytes"]) * 100
                 )
 
-                self.ui.infoLabel.setText(f"جاري التحميل... {progress_percentage}%")
+                self.ui.progressBar.setTextVisible(True)
+                self.ui.progressBar.setValue(progress_percentage)
+                self.ui.infoLabel.setText("جاري التحميل...")
             except:  # noqa: E722
+                self.ui.progressBar.setTextVisible(False)
+                self.ui.progressBar.setValue(0)
                 self.ui.infoLabel.setText(
                     "جاري التحميل... (لم نستطع استخراج مدى اكتمال التحميل)."
                 )
 
     def on_finish_download(self, err_code: int):
         self.ui.downloadButton.setDisabled(False)
+        self.ui.progressBar.setTextVisible(False)
 
         if err_code:
             QMessageBox.information(
@@ -51,6 +55,7 @@ class MainWindow(QMainWindow):
                 "هناك خلل",
                 f"حدث خلل أثناء التحميل ({err_code})\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.",
             )
+            self.ui.progressBar.setValue(0)
         else:
             # TODO: Add button for opening the containing folder
             QMessageBox.information(self, "تمت العملية بنجاح", "تم تحميل المقطع بنجاح")
@@ -94,6 +99,8 @@ class MainWindow(QMainWindow):
 
         # Update UI before starting the worker
         self.ui.downloadButton.setDisabled(True)
+        self.ui.progressBar.setValue(0)
+        self.ui.progressBar.setTextVisible(True)
         self.ui.infoLabel.setText("انتظروا قليلا حتى يبدأ التحميل...")
 
         self.worker.start()
