@@ -8,9 +8,10 @@ IS_LINUX = os.name == "posix"
 
 if __name__ == "__main__":
     # first, make sure the ui is synced with assets/gui.ui
-    # TODO: add windows
     if IS_LINUX:
-        subprocess.call(["sh", "./build_ui.sh"])
+        subprocess.run(["sh", "./build_ui.sh"], shell=True, check=True)
+    else:
+        subprocess.run(["./build_ui.bat"], shell=True, check=True)
 
     PyInstaller.__main__.run(
         [
@@ -19,7 +20,7 @@ if __name__ == "__main__":
             "--noconsole",
             "--windowed",
             "--icon",
-            "./assets/icon.png",
+            "./assets/icon.ico",
         ]
     )
 
