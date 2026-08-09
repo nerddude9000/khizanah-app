@@ -22,6 +22,8 @@ if __name__ == "__main__":
             "--onefile",
             "--noconsole",
             "--windowed",
+            "--optimize",
+            "2",
             "--icon",
             "./assets/icon.ico",
             "--add-data",
