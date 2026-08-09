@@ -16,6 +16,8 @@ VERSION = "1.0.0 تجريبي"
 
 
 class MainWindow(QMainWindow):
+    is_downloading = False
+
     def __init__(self):
         super().__init__()
         self.config = configparser.ConfigParser()
@@ -90,6 +92,7 @@ class MainWindow(QMainWindow):
 
     def on_finish_download(self, err_code: int):
         self.ui.downloadButton.setDisabled(False)
+        self.is_downloading = False
 
         if err_code:
             QMessageBox.critical(
@@ -106,10 +109,11 @@ class MainWindow(QMainWindow):
             self.ui.progressBar.setValue(100)
             QMessageBox.information(self, "تمت العملية بنجاح", "انتهى التحميل بنجاح.")
 
-        # TODO: del self.worker?
-
     def start_download(self):
-        # TODO: add is_downloading and checks
+        if self.is_downloading:
+            return
+
+        self.is_downloading = True
         url = self.ui.urlInput.text()
 
         if len(url) == 0:
