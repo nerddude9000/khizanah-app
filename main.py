@@ -105,16 +105,23 @@ class MainWindow(QMainWindow):
 
         self.ui.infoLabel.setText(msg)
 
-    def on_finish_download(self, err_code: int):
+    def on_finish_download(self, err_code: int, is_playlist: bool):
         self.ui.downloadButton.setDisabled(False)
         self.is_downloading = False
 
         if err_code:
-            QMessageBox.critical(
-                self,
-                "هناك خلل",
-                "حدث خلل أثناء التحميل.\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.\n\nوقد يكون الخلل من اليوتيوب، فانتظروا قليلا قبل إعادة المحاولة.",
-            )
+            if is_playlist:
+                QMessageBox.critical(
+                    self,
+                    "هناك خلل",
+                    "حدث خلل أثناء بعض مقاطع القائمة.\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.\n\nقد يكون الخلل من اليوتيوب، فانتظروا قليلا قبل إعادة المحاولة لتحميل باقي المقاطع (ولن يعاد تحميل التي نجحت).",
+                )
+            else:
+                QMessageBox.critical(
+                    self,
+                    "هناك خلل",
+                    "حدث خلل أثناء التحميل.\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.\n\nوقد يكون الخلل من اليوتيوب، فانتظروا قليلا قبل إعادة المحاولة.",
+                )
             self.ui.progressBar.setValue(0)
             self.ui.progressBar.setTextVisible(False)
             self.ui.infoLabel.setText("حدث خلل.")
