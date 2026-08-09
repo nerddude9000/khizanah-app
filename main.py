@@ -13,7 +13,7 @@ from ydl import DownloadType, DownloadWorker
 IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
 CONFIG_PATH = "config.ini"
-VERSION = "1.0.0 تجريبي"
+VERSION = "2.0.0 تجريبي"
 
 
 class MainWindow(QMainWindow):
