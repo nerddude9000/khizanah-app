@@ -11,7 +11,7 @@ if __name__ == "__main__":
     if IS_LINUX:
         subprocess.run(["sh", "./build_ui.sh"], shell=True, check=True)
     else:
-        subprocess.run(["./build_ui.bat"], shell=True, check=True)
+        subprocess.run(["build_ui.bat"], shell=True, check=True)
 
     PyInstaller.__main__.run(
         [

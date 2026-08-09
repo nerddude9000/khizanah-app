@@ -8,7 +8,7 @@ from ui_mainwindow import Ui_MainWindow
 from ydl import DownloadType, DownloadWorker
 
 # TODO: The ui is too small, implement a real fix
-os.environ["QT_SCALE_FACTOR"] = "1.5"
+os.environ["QT_SCALE_FACTOR"] = "1.25"
 IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # macos isn't supported
 CONFIG_PATH = "config.ini"
@@ -174,11 +174,11 @@ class MainWindow(QMainWindow):
         if IS_DEBUG:
             return
 
-        with open("config.ini", "w") as config_file:
+        with open("config.ini", "w", encoding="utf-8") as config_file:
             self.config.write(config_file)
 
     def load_config(self):
-        if len(self.config.read(CONFIG_PATH)) == 0:
+        if len(self.config.read(CONFIG_PATH, encoding="utf-8")) == 0:
             # file doesn't exist (it should get created later in save_config)
             self.show_initial_load_popup()
             return
