@@ -16,7 +16,7 @@ download_type_formats: dict[DownloadType, str] = {
 }
 
 #
-# NOTE: if you're building this yourself, you are expected to provide
+# @FFMPEG NOTE: if you're building this yourself, you are expected to provide
 # linux and win64 binaries and put them into "./vendor/ffmpeg/<os>/".
 # I can't push these into the repository as they exceed github's 100MB limit.
 # I do however, Inshallah, bundle them into the release executables for ease of use.

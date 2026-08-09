@@ -12,8 +12,10 @@ if __name__ == "__main__":
     else:
         subprocess.run(["build_ui.bat"], shell=True, check=True)
 
+    # NOTE: see @FFMPEG comment in ydl.py
     ffmpeg_binary_path = "vendor/ffmpeg/linux/" if IS_LINUX else "vendor/ffmpeg/win64/"
 
+    # TODO: try to not include unnecessary library files that could bloat the executable.
     PyInstaller.__main__.run(
         [
             "main.py",
