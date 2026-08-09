@@ -6,6 +6,8 @@ import yt_dlp
 from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
 
+from utils import resource_path
+
 DownloadType = Enum("DownloadType", ["m4a", "720p", "best"])
 download_type_formats: dict[DownloadType, str] = {
     DownloadType["m4a"]: "139/ba/m4a",
@@ -19,8 +21,8 @@ download_type_formats: dict[DownloadType, str] = {
 # I can't push these into the repository as they exceed github's 100MB limit.
 # I do however, Inshallah, bundle them into the release executables for ease of use.
 #
-FFMPEG_BINARY_PATH = (
-    "./vendor/ffmpeg/linux/" if os.name == "posix" else "./vendor/ffmpeg/win64/"
+FFMPEG_BINARY_PATH = resource_path(
+    "vendor/ffmpeg/linux/" if os.name == "posix" else "vendor/ffmpeg/win64/"
 )
 
 

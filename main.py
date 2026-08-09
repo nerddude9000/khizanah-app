@@ -6,10 +6,11 @@ from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from ui_mainwindow import Ui_MainWindow
+from utils import resource_path
 from ydl import DownloadType, DownloadWorker
 
 IS_DEBUG = os.getenv("DEBUG", "false") == "true"
-IS_LINUX = os.name == "posix"  # macos isn't supported
+IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
 CONFIG_PATH = "config.ini"
 VERSION = "1.0.0 تجريبي"
 
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow):
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
         self.ui.progressBar.hide()  # will get shown on first download
         self.ui.footerLabel.setText(
-            f'<a href="https://github.com/nerddude9000/khizanah-app" style="white-space: pre-line; color: gray; text-decoration: none;">هذا التطبيق مجاني تماما. التزموا مرضاة الله في استخدامه\nالإصدار {VERSION}</a>'
+            f'<a href="https://github.com/nerddude9000/khizanah-app" style="white-space: pre-line; color: gray; text-decoration: none;">هذا التطبيق مجاني تماما. التزموا حدود الله في استخدامه.\nالإصدار {VERSION}</a>'
         )
 
         if not IS_DEBUG:
@@ -58,6 +59,7 @@ class MainWindow(QMainWindow):
         elif status == "error":
             msg = "حدث خلل أثناء التحميل."
 
+        # TODO: display extra info, like speed and eta
         elif status == "downloading":
             try:
                 progress_percentage = round(
@@ -90,24 +92,28 @@ class MainWindow(QMainWindow):
         self.ui.downloadButton.setDisabled(False)
 
         if err_code:
-            QMessageBox.information(
+            QMessageBox.critical(
                 self,
                 "هناك خلل",
-                f"حدث خلل أثناء التحميل ({err_code})\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.",
+                "حدث خلل أثناء التحميل.\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.\n\nوقد يكون الخلل من اليوتيوب، فانتظروا قليلا قبل إعادة المحاولة.",
             )
             self.ui.progressBar.setValue(0)
+            self.ui.progressBar.setTextVisible(False)
             self.ui.infoLabel.setText("حدث خلل.")
 
         else:
             self.ui.infoLabel.setText("انتهى التحميل بنجاح.")
             self.ui.progressBar.setValue(100)
-            QMessageBox.information(self, "تمت العملية بنجاح", "تم تحميل المقطع بنجاح")
+            QMessageBox.information(self, "تمت العملية بنجاح", "انتهى التحميل بنجاح.")
+
+        # TODO: del self.worker?
 
     def start_download(self):
+        # TODO: add is_downloading and checks
         url = self.ui.urlInput.text()
 
         if len(url) == 0:
-            QMessageBox.information(
+            QMessageBox.question(
                 self, "هناك خلل", "أدخلوا رابط المقطع أو قائمة التشغيل أولا."
             )
             return
@@ -115,7 +121,7 @@ class MainWindow(QMainWindow):
         download_path = self.config.get("preferences", "download_path", fallback=None)
 
         if not download_path:
-            QMessageBox.information(
+            QMessageBox.question(
                 self,
                 "هناك خلل",
                 "مجلد الخزانة الذي اخترتموه غير صحيح، قم بتغييره أولا.",
@@ -163,7 +169,7 @@ class MainWindow(QMainWindow):
         download_path = self.config.get("preferences", "download_path", fallback=None)
 
         if not download_path:
-            QMessageBox.information(
+            QMessageBox.critical(
                 self,
                 "هناك خلل",
                 "مجلد الخزانة الذي اخترتموه غير صحيح، قم بتغييره أولا.",
@@ -208,7 +214,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication()
 
-    font_id = QFontDatabase.addApplicationFont("./assets/rubik.woff2")
+    font_id = QFontDatabase.addApplicationFont(resource_path("assets/rubik.woff2"))
     family = QFontDatabase.applicationFontFamilies(font_id)[0]
     app.setFont(QFont(family, 14))
 
