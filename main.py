@@ -2,6 +2,7 @@ import configparser
 import os
 import subprocess
 
+from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from ui_mainwindow import Ui_MainWindow
@@ -10,6 +11,7 @@ from ydl import DownloadType, DownloadWorker
 IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # macos isn't supported
 CONFIG_PATH = "config.ini"
+VERSION = "1.0.0 تجريبي"
 
 
 class MainWindow(QMainWindow):
@@ -25,6 +27,9 @@ class MainWindow(QMainWindow):
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
         self.ui.progressBar.hide()  # will get shown on first download
+        self.ui.footerLabel.setText(
+            f'<a href="https://github.com/nerddude9000/khizanah-app" style="white-space: pre-line; color: gray; text-decoration: none;">هذا التطبيق مجاني تماما. التزموا مرضاة الله في استخدامه\nالإصدار {VERSION}</a>'
+        )
 
         if not IS_DEBUG:
             self.load_config()
@@ -202,6 +207,10 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication()
+
+    font_id = QFontDatabase.addApplicationFont("./assets/rubik.woff2")
+    family = QFontDatabase.applicationFontFamilies(font_id)[0]
+    app.setFont(QFont(family, 14))
 
     window = MainWindow()
     window.show()

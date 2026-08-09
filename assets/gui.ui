@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>400</height>
+    <height>435</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>750</width>
-    <height>400</height>
+    <height>435</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>750</width>
-    <height>400</height>
+    <height>435</height>
    </size>
   </property>
   <property name="font">
@@ -41,9 +41,18 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>435</height>
+    </size>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>16</number>
+      </property>
       <item>
        <spacer name="verticalSpacer_2">
         <property name="orientation">
@@ -56,6 +65,22 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="titleLabel">
+        <property name="font">
+         <font>
+          <pointsize>24</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>خِزانة</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -85,6 +110,12 @@
           </property>
           <item>
            <widget class="QLineEdit" name="urlInput">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
             <property name="baseSize">
              <size>
               <width>0</width>
@@ -94,6 +125,7 @@
             <property name="font">
              <font>
               <pointsize>12</pointsize>
+              <bold>false</bold>
              </font>
             </property>
             <property name="placeholderText">
@@ -112,7 +144,7 @@
             <property name="font">
              <font>
               <pointsize>14</pointsize>
-              <bold>true</bold>
+              <fontweight>Medium</fontweight>
              </font>
             </property>
             <property name="title">
@@ -148,7 +180,7 @@
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
-                  <fontweight>Light</fontweight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="cursor">
@@ -164,7 +196,7 @@
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
-                  <fontweight>Light</fontweight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="cursor">
@@ -180,7 +212,7 @@
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
-                  <fontweight>Light</fontweight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="cursor">
@@ -249,7 +281,7 @@
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
-                <fontweight>Light</fontweight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="cursor">
@@ -271,7 +303,7 @@
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
-                <fontweight>Light</fontweight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="cursor">
@@ -294,7 +326,7 @@
               <property name="minimumSize">
                <size>
                 <width>650</width>
-                <height>0</height>
+                <height>40</height>
                </size>
               </property>
               <property name="maximumSize">
@@ -327,6 +359,12 @@
              <widget class="QProgressBar" name="progressBar">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>20</height>
+               </size>
               </property>
               <property name="value">
                <number>100</number>
@@ -387,24 +425,32 @@
         </property>
        </spacer>
       </item>
-      <item alignment="Qt::AlignmentFlag::AlignHCenter">
-       <widget class="QLabel" name="label_2">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <italic>false</italic>
-         </font>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="spacing">
+         <number>4</number>
         </property>
-        <property name="text">
-         <string>&lt;a href=&quot;https://github.com/nerddude9000/khizanah-app&quot; style=&quot;color: gray; text-decoration: none;&quot;&gt;هذا التطبيق مجاني تماما. التزموا مرضاة الله في استخدامه.&lt;/a&gt;</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
-        </property>
-        <property name="openExternalLinks">
-         <bool>true</bool>
-        </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="footerLabel">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <italic>false</italic>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>&lt;a href=&quot;https://github.com/nerddude9000/khizanah-app&quot; style=&quot;white-space: pre-line; color: gray; text-decoration: none;&quot;&gt;هذا التطبيق مجاني تماما. التزموا مرضاة الله في استخدامه.&lt;/a&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

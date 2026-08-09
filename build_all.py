@@ -24,6 +24,8 @@ if __name__ == "__main__":
         ]
     )
 
+    # TODO: replace this entirely with --add-data directly on PyInstaller
+    # TODO: include font file
     print("compilation done, now moving necessary files to 'dist/'...")
 
     dist_vendor_path = (
