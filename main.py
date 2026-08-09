@@ -7,8 +7,6 @@ from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBo
 from ui_mainwindow import Ui_MainWindow
 from ydl import DownloadType, DownloadWorker
 
-# TODO: The ui is too small, implement a real fix
-os.environ["QT_SCALE_FACTOR"] = "1.25"
 IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # macos isn't supported
 CONFIG_PATH = "config.ini"
