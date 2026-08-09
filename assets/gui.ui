@@ -91,6 +91,11 @@
               <height>0</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
             <property name="placeholderText">
              <string>رابط المقطع أو قائمة التشغيل على اليوتيوب...</string>
             </property>
@@ -101,8 +106,14 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>64</height>
+              <height>75</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <bold>true</bold>
+             </font>
             </property>
             <property name="title">
              <string>نوع التحميل</string>
@@ -130,14 +141,14 @@
                <number>8</number>
               </property>
               <property name="bottomMargin">
-               <number>8</number>
+               <number>4</number>
               </property>
               <item>
                <widget class="QRadioButton" name="downloadModeRadio_Best">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
-                  <bold>false</bold>
+                  <fontweight>Light</fontweight>
                  </font>
                 </property>
                 <property name="cursor">
@@ -150,6 +161,12 @@
               </item>
               <item>
                <widget class="QRadioButton" name="downloadModeRadio_720p">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <fontweight>Light</fontweight>
+                 </font>
+                </property>
                 <property name="cursor">
                  <cursorShape>ArrowCursor</cursorShape>
                 </property>
@@ -160,6 +177,12 @@
               </item>
               <item>
                <widget class="QRadioButton" name="downloadModeRadio_Audio">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <fontweight>Light</fontweight>
+                 </font>
+                </property>
                 <property name="cursor">
                  <cursorShape>ArrowCursor</cursorShape>
                 </property>
@@ -177,13 +200,22 @@
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>4</number>
+            </property>
             <item>
              <widget class="QLabel" name="label">
               <property name="maximumSize">
                <size>
-                <width>100</width>
+                <width>110</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>14</pointsize>
+                <bold>false</bold>
+               </font>
               </property>
               <property name="text">
                <string>مجلد الخزانة:</string>
@@ -194,7 +226,7 @@
              <widget class="QLabel" name="pathLabel">
               <property name="font">
                <font>
-                <pointsize>8</pointsize>
+                <pointsize>12</pointsize>
                 <fontweight>Light</fontweight>
                </font>
               </property>
@@ -210,7 +242,7 @@
              <widget class="QPushButton" name="changePathButton">
               <property name="maximumSize">
                <size>
-                <width>50</width>
+                <width>60</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -232,7 +264,7 @@
              <widget class="QPushButton" name="openPathButton">
               <property name="maximumSize">
                <size>
-                <width>40</width>
+                <width>45</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -258,19 +290,6 @@
              <number>4</number>
             </property>
             <item>
-             <widget class="QProgressBar" name="progressBar">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="value">
-               <number>100</number>
-              </property>
-              <property name="textVisible">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="downloadButton">
               <property name="minimumSize">
                <size>
@@ -293,6 +312,7 @@
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
+                <fontweight>Medium</fontweight>
                </font>
               </property>
               <property name="cursor">
@@ -300,6 +320,19 @@
               </property>
               <property name="text">
                <string>تحميل</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="progressBar">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="value">
+               <number>100</number>
+              </property>
+              <property name="textVisible">
+               <bool>false</bool>
               </property>
              </widget>
             </item>

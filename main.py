@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
+        self.ui.progressBar.hide()  # will get shown on first download
 
         if not IS_DEBUG:
             self.load_config()
@@ -139,6 +140,7 @@ class MainWindow(QMainWindow):
 
         # Update UI before starting the worker
         self.ui.downloadButton.setDisabled(True)
+        self.ui.progressBar.show()  # because it gets hidden at app startup
         self.ui.progressBar.setValue(0)
         self.ui.progressBar.setTextVisible(True)
         self.ui.infoLabel.setText("انتظروا قليلا حتى يبدأ التحميل...")
