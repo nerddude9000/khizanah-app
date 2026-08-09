@@ -168,7 +168,7 @@ class MainWindow(QMainWindow):
         if IS_LINUX:
             subprocess.Popen(["xdg-open", download_path])
         else:  # windows, no macos support
-            subprocess.Popen(f'explorer "{download_path}"')
+            os.startfile(download_path)
 
     def save_config(self):
         if IS_DEBUG:
