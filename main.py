@@ -214,7 +214,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication()
 
-    font_id = QFontDatabase.addApplicationFont(resource_path("assets/rubik.woff2"))
+    font_id = QFontDatabase.addApplicationFont(resource_path("assets/rubik.ttf"))
     family = QFontDatabase.applicationFontFamilies(font_id)[0]
     app.setFont(QFont(family, 14))
 
