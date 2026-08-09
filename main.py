@@ -14,7 +14,7 @@ from ydl import DownloadType, DownloadWorker
 IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
 CONFIG_PATH = "config.ini"
-VERSION = "2.0.0 تجريبي"
+VERSION = "2.0.0 (تجريبي)"
 
 
 class MainWindow(QMainWindow):
@@ -46,7 +46,8 @@ class MainWindow(QMainWindow):
             "شروط الاستخدام",
             """أهلا بكم في تطبيق خزانة لتحميل المقاطع والصوتيات.
 
-لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو البدع، إلا إذا كنتم ستحذفونها أو تردون عليها ونحو ذلك.
+لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو بدع، إلا إذا كنتم ستحذفونها أو تردون عليها ونحو ذلك.
+
 ولا يقتصر المحذور على ما ذكرنا، ويُُرجع فيه لأهل العلم من أهل السنة.
 
 وفقنا الله وإياكم.""",
@@ -131,7 +132,7 @@ class MainWindow(QMainWindow):
         url = self.ui.urlInput.text()
 
         if len(url) == 0:
-            QMessageBox.question(
+            QMessageBox.warning(
                 self, "هناك خلل", "أدخلوا رابط المقطع أو قائمة التشغيل أولا."
             )
             return
@@ -139,7 +140,7 @@ class MainWindow(QMainWindow):
         download_path = self.config.get("preferences", "download_path", fallback=None)
 
         if not download_path:
-            QMessageBox.question(
+            QMessageBox.warning(
                 self,
                 "هناك خلل",
                 "مجلد الخزانة الذي اخترتموه غير صحيح، قم بتغييره أولا.",
