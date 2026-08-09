@@ -1,3 +1,4 @@
+from PySide6.QtGui import QIcon
 import configparser
 import os
 import subprocess
@@ -27,6 +28,7 @@ class MainWindow(QMainWindow):
         self.setup_app()
 
     def setup_app(self):
+        self.setWindowIcon(QIcon(resource_path("assets/icon.ico")))
         self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
