@@ -1,6 +1,7 @@
 import configparser
 import os
 import subprocess
+import time
 
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
@@ -49,9 +50,9 @@ class MainWindow(QMainWindow):
 وفقنا الله وإياكم.""",
         )
 
-    def on_download_progress(self, data, is_playlist):
-        status = data["status"]
-        info = data["info_dict"]
+    def on_download_progress(self, d, is_playlist):
+        status = d["status"]
+        info = d["info_dict"]
         msg = self.ui.infoLabel.text()
 
         if status == "finished":
@@ -61,12 +62,13 @@ class MainWindow(QMainWindow):
         elif status == "error":
             msg = "حدث خلل أثناء التحميل."
 
-        # TODO: display extra info, like speed and eta
         elif status == "downloading":
             try:
                 progress_percentage = round(
-                    (data["downloaded_bytes"] / data["total_bytes"]) * 100
+                    (d["downloaded_bytes"] / d["total_bytes"]) * 100
                 )
+                speed_bytes_per_sec = d.get("speed")
+                eta = d.get("eta")
 
                 self.ui.progressBar.setTextVisible(True)
                 self.ui.progressBar.setValue(progress_percentage)
@@ -78,6 +80,16 @@ class MainWindow(QMainWindow):
                     msg = f"جاري تحميل القائمة... ({current} من {total})"
                 else:
                     msg = "جاري التحميل..."
+
+                if speed_bytes_per_sec:
+                    speed_Mbytes_per_sec = round(
+                        (float(speed_bytes_per_sec) / 1024) / 1024, 2
+                    )
+                    msg += f"  {speed_Mbytes_per_sec} مب/ث"
+
+                if eta:
+                    eta_str = time.strftime("%M:%S", time.gmtime(eta))
+                    msg += f"  تبقى: {eta_str}"
 
             except:  # noqa: E722
                 self.ui.progressBar.setTextVisible(False)
