@@ -27,9 +27,18 @@ class MainWindow(QMainWindow):
         self.setup_app()
 
     def setup_app(self):
+        if not IS_DEBUG:
+            self.load_config()
+
         self.setWindowIcon(QIcon(resource_path("assets/icon.ico")))
         self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
-        self.ui.metadataCheck.clicked.connect(lambda: self.on_metadata_checked())
+        self.ui.metadataCheck.clicked.connect(lambda: self.on_metadata_update())
+        self.ui.metadataTitleInput.textChanged.connect(
+            lambda: self.on_metadata_update()
+        )
+        self.ui.metadataAuthorInput.textChanged.connect(
+            lambda: self.on_metadata_update()
+        )
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
         self.ui.footerLabel.setText(
@@ -37,11 +46,10 @@ class MainWindow(QMainWindow):
         )
 
         self.ui.progressBar.hide()  # will get shown on first download
-        self.ui.metadataTitleInput.hide()  # < these get shown if metadataCheckbox is checked
-        self.ui.metadataAuthorInput.hide()  # <
 
-        if not IS_DEBUG:
-            self.load_config()
+        if not self.config["metadata_checked"]:
+            self.ui.metadataTitleInput.hide()
+            self.ui.metadataAuthorInput.hide()
 
     def show_initial_load_popup(self):
         QMessageBox.information(
@@ -194,7 +202,7 @@ class MainWindow(QMainWindow):
             self.config["download_path"] = folder
             self.save_config()
 
-    def on_metadata_checked(self):
+    def on_metadata_update(self):
         is_checked = self.ui.metadataCheck.isChecked()
         if is_checked:
             self.ui.metadataAuthorInput.show()
@@ -203,7 +211,10 @@ class MainWindow(QMainWindow):
             self.ui.metadataAuthorInput.hide()
             self.ui.metadataTitleInput.hide()
 
-        # TODO: save
+        self.config["metadata_checked"] = is_checked
+        self.config["metadata_author"] = self.ui.metadataAuthorInput.text()
+        self.config["metadata_title"] = self.ui.metadataTitleInput.text()
+        self.save_config()
 
     def open_download_path(self):
         download_path = self.config.get("download_path")
@@ -226,7 +237,7 @@ class MainWindow(QMainWindow):
             return
 
         with open("config.json", "w", encoding="utf-8") as f:
-            json.dump(self.config, f, indent=2)
+            json.dump(self.config, f)
 
     def load_config(self):
         if not os.path.exists("config.json"):
@@ -250,6 +261,21 @@ class MainWindow(QMainWindow):
                 del self.config["download_path"]
             else:
                 self.ui.pathLabel.setText(loaded_download_path)
+
+        is_metadata_checked = self.config.get("metadata_checked")
+
+        if is_metadata_checked:
+            self.ui.metadataCheck.setChecked(True)
+            self.ui.metadataAuthorInput.show()
+            self.ui.metadataTitleInput.show()
+
+        metadata_author = self.config.get("metadata_author")
+        if metadata_author:
+            self.ui.metadataAuthorInput.setText(metadata_author)
+
+        metadata_title = self.config.get("metadata_title")
+        if metadata_title:
+            self.ui.metadataTitleInput.setText(metadata_title)
 
 
 if __name__ == "__main__":
