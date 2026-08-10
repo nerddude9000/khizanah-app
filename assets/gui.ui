@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>435</height>
+    <height>475</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>750</width>
-    <height>435</height>
+    <height>475</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>750</width>
-    <height>435</height>
+    <height>475</height>
    </size>
   </property>
   <property name="font">
@@ -44,14 +44,14 @@
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>435</height>
+     <height>475</height>
     </size>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
-       <number>16</number>
+       <number>10</number>
       </property>
       <item>
        <spacer name="verticalSpacer_2">
@@ -71,7 +71,7 @@
         <property name="font">
          <font>
           <pointsize>24</pointsize>
-          <bold>true</bold>
+          <fontweight>ExtraBold</fontweight>
          </font>
         </property>
         <property name="text">
@@ -103,7 +103,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="spacing">
-           <number>14</number>
+           <number>10</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -229,6 +229,87 @@
              </layout>
             </widget>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QCheckBox" name="numerationCheck">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>ترقيم مقاطع وصوتيات قوائم التشغيل</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="metadataCheck">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="toolTip">
+                 <string>الأوصاف تنفع عند رفع الصوتيات إلى التلجرام لكي يظهر اسم الصوتية مع اسم صاحبها.</string>
+                </property>
+                <property name="text">
+                 <string>إضافة أوصاف (ميتا ديتا) للتنزيلات</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <property name="spacing">
+                 <number>8</number>
+                </property>
+                <item>
+                 <widget class="QLineEdit" name="metadataAuthorInput">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
+                  <property name="placeholderText">
+                   <string>اسم الشيخ، القارئ، ...</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="metadataTitleInput">
+                  <property name="font">
+                   <font>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
+                  <property name="placeholderText">
+                   <string>اسم الشرح...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -438,11 +519,17 @@
         </property>
         <item>
          <widget class="QLabel" name="footerLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>32</height>
+           </size>
+          </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <italic>false</italic>
-            <bold>false</bold>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
