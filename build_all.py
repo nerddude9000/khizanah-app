@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # NOTE: see @FFMPEG comment in ydl.py
     ffmpeg_binary_path = "vendor/ffmpeg/linux/" if IS_LINUX else "vendor/ffmpeg/win64/"
 
-    # TODO: try to not include unnecessary library files that could bloat the executable.
+    # TODO: try to not include unnecessary library files that bloat the executable (if possible).
     PyInstaller.__main__.run(
         [
             "main.py",

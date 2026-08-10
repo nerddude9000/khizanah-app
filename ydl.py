@@ -5,12 +5,14 @@ from enum import Enum
 import yt_dlp
 from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
+from yt_dlp.postprocessor.metadataparser import MetadataParserPP
 
 from utils import resource_path
 
-DownloadType = Enum("DownloadType", ["m4a", "720p", "best"])
+DownloadType = Enum("DownloadType", ["audio", "720p", "best"])
+# refer to yt-dlp format docs for more information
 download_type_formats: dict[DownloadType, str] = {
-    DownloadType["m4a"]: "139/ba/m4a",
+    DownloadType["audio"]: "139/ba/m4a",
     DownloadType["720p"]: "bv[height=720]+(139/ba/m4a)",
     DownloadType["best"]: "bv+ba",
 }
@@ -32,29 +34,23 @@ FFMPEG_BINARY_PATH = resource_path(
 # progress elements to not show, and the app itself to freeze.
 #
 class DownloadWorker(QThread):
-    progress_signal = Signal(dict, bool) # progress_hooks_data, is_playlist
-    finish_signal = Signal(int, bool) # error_code, is_playlist
-    is_playlist: bool
+    progress_signal = Signal(dict, bool)  # progress_hooks_data, is_playlist
+    finish_signal = Signal(int, bool)  # error_code, is_playlist
+    is_playlist: bool = False
 
     def __init__(
         self,
         url: str,
         download_type: DownloadType,
         download_path: str,
+        download_metadata: None | dict,
     ) -> None:
         super().__init__()
-
-        # init the format variable based on passed type
-        # refer to yt-dlp format docs for more information
-        if download_type not in download_type_formats:
-            raise ValueError  # should never happen
-
-        dl_format = download_type_formats.get(download_type)
-
         self.options = {
             "url": url,
-            "download_format": dl_format,
+            "download_type": download_type,
             "download_path": download_path,
+            "download_metadata": download_metadata,
         }
 
     def _extract_info(self):
@@ -66,6 +62,7 @@ class DownloadWorker(QThread):
     def run(self):
         op = self.options
         template = "%(title)s.%(ext)s"
+        dl_format = download_type_formats.get(op["download_type"])
 
         try:
             # extract info to check some details, like if this is a playlist
@@ -81,15 +78,54 @@ class DownloadWorker(QThread):
             template = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
             self.is_playlist = True
 
+        metadata = op.get("download_metadata")
+        # metadata gets added to audios only to save performance,
+        # i don't see the benefit of adding it to video.
+        if metadata and op["download_type"] == DownloadType["audio"]:
+            postprocessors_for_metadata = [
+                {
+                    "key": "MetadataParser",
+                    "actions": [],
+                    "when": "pre_process",
+                },
+                {"key": "FFmpegMetadata", "add_metadata": True},
+            ]
+
+            if metadata.get("author"):
+                postprocessors_for_metadata[0]["actions"].append(
+                    (
+                        MetadataParserPP.interpretter,
+                        f"{metadata["author"]}",
+                        "%(artist)s",
+                    ),
+                )
+
+            if metadata.get("title"):
+                postprocessors_for_metadata[0]["actions"].append(
+                    (
+                        MetadataParserPP.interpretter,
+                        (
+                            f"%(playlist_index)s - {metadata.get("title")}"
+                            if self.is_playlist
+                            else f"{metadata.get("title")}"
+                        ),
+                        "%(title)s",
+                    ),
+                )
+
+        else:
+            postprocessors_for_metadata = []
+
         with YoutubeDL(
             params={
-                "format": op["download_format"],
+                "format": dl_format,
                 "outtmpl": os.path.join(op["download_path"], template),
                 "progress_hooks": [self._hook],
                 "ffmpeg_location": FFMPEG_BINARY_PATH,
                 "ignoreerrors": (  # force stop when single video download fails, don't on playlists
                     "only_download" if self.is_playlist else False
                 ),
+                "postprocessors": postprocessors_for_metadata,
             }
         ) as dl:
             try:

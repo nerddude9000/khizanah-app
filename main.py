@@ -16,6 +16,7 @@ CONFIG_PATH = "config.ini"
 VERSION = "2.0.0 (تجريبي)"
 
 
+# TODO: add logging?
 class MainWindow(QMainWindow):
     is_downloading = False
 
@@ -119,7 +120,7 @@ class MainWindow(QMainWindow):
         self.ui.infoLabel.setText(msg)
 
     def on_finish_download(self, err_code: int, is_playlist: bool):
-        self.ui.downloadButton.setDisabled(False)
+        self.toggle_all_inputs(disabled=False)
         self.is_downloading = False
 
         if err_code:
@@ -170,32 +171,50 @@ class MainWindow(QMainWindow):
         # Set download_type based on selected ui radio
         download_type: DownloadType
         if self.ui.downloadModeRadio_Audio.isChecked():
-            download_type = DownloadType.m4a
+            download_type = DownloadType["audio"]
 
         elif self.ui.downloadModeRadio_720p.isChecked():
             download_type = DownloadType["720p"]
 
         else:
-            download_type = DownloadType.best
+            download_type = DownloadType["best"]
+
+        if self.config.get("metadata_checked"):
+            download_metadata = {}
+
+            author = self.config.get("metadata_author")
+            if author:
+                download_metadata["author"] = author
+
+            title = self.config.get("metadata_title")
+            if title:
+                download_metadata["title"] = title
+
+        else:
+            download_metadata = None
 
         # We must use self to prevent it from being garbage collected
         self.worker = DownloadWorker(
-            url,
-            download_type,
-            download_path,
+            url, download_type, download_path, download_metadata
         )
 
         self.worker.progress_signal.connect(self.on_download_progress)
         self.worker.finish_signal.connect(self.on_finish_download)
 
         # Update UI before starting the worker
-        self.ui.downloadButton.setDisabled(True)
+        self.toggle_all_inputs(disabled=True)
         self.ui.progressBar.show()  # because it gets hidden at app startup
         self.ui.progressBar.setValue(0)
         self.ui.progressBar.setTextVisible(True)
         self.ui.infoLabel.setText("انتظروا قليلا حتى يبدأ التحميل...")
 
         self.worker.start()
+
+    def toggle_all_inputs(self, disabled: bool):
+        self.ui.downloadButton.setDisabled(disabled)
+        self.ui.metadataCheck.setDisabled(disabled)
+        self.ui.metadataTitleInput.setDisabled(disabled)
+        self.ui.metadataAuthorInput.setDisabled(disabled)
 
     def update_download_path(self):
         folder = QFileDialog.getExistingDirectory(self, "أين تريد تنزيل المقاطع؟")
