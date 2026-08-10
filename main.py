@@ -1,10 +1,9 @@
-from PySide6.QtGui import QIcon
-import configparser
+import json
 import os
 import subprocess
 import time
 
-from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtGui import QFont, QFontDatabase, QIcon
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from ui_mainwindow import Ui_MainWindow
@@ -22,7 +21,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.config = configparser.ConfigParser()
+        self.config = {}
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_app()
@@ -148,7 +147,7 @@ class MainWindow(QMainWindow):
             )
             return
 
-        download_path = self.config.get("preferences", "download_path", fallback=None)
+        download_path = self.config.get("download_path")
 
         if not download_path:
             QMessageBox.warning(
@@ -192,7 +191,7 @@ class MainWindow(QMainWindow):
         folder = QFileDialog.getExistingDirectory(self, "أين تريد تنزيل المقاطع؟")
         if folder:
             self.ui.pathLabel.setText(folder)
-            self.config["preferences"] = {"download_path": folder}
+            self.config["download_path"] = folder
             self.save_config()
 
     def on_metadata_checked(self):
@@ -207,7 +206,7 @@ class MainWindow(QMainWindow):
         # TODO: save
 
     def open_download_path(self):
-        download_path = self.config.get("preferences", "download_path", fallback=None)
+        download_path = self.config.get("download_path")
 
         if not download_path:
             QMessageBox.critical(
@@ -226,28 +225,29 @@ class MainWindow(QMainWindow):
         if IS_DEBUG:
             return
 
-        with open("config.ini", "w", encoding="utf-8") as config_file:
-            self.config.write(config_file)
+        with open("config.json", "w", encoding="utf-8") as f:
+            json.dump(self.config, f, indent=2)
 
     def load_config(self):
-        if len(self.config.read(CONFIG_PATH, encoding="utf-8")) == 0:
+        if not os.path.exists("config.json"):
             # file doesn't exist (it should get created later in save_config)
             self.show_initial_load_popup()
             return
 
-        loaded_download_path = self.config.get(
-            "preferences", "download_path", fallback=None
-        )
+        with open("config.json", "r", encoding="utf-8") as f:
+            self.config = json.load(f)
+
+        loaded_download_path = self.config.get("download_path")
 
         if loaded_download_path:
             if not os.path.exists(loaded_download_path):
                 #
-                # if the path wasn't valid, set it to None here and now.
+                # if the path wasn't valid, delete it here and now
                 # this is to prevent checking if the path is valid everytime it is used,
                 # which is terrible for performance for something that shouldn't even happen.
-                # so now -when using it- we will just check if it's None.
+                # so now -when using it- we will just check if the variable itself exists.
                 #
-                self.config.set("preferences", "download_path", None)
+                del self.config["download_path"]
             else:
                 self.ui.pathLabel.setText(loaded_download_path)
 

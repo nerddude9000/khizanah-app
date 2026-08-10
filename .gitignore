@@ -1,6 +1,6 @@
 # generated files
 ui_mainwindow.py
-config.ini
+config.*
 
 # ffmpeg vendor binaries
 vendor/ffmpeg/
