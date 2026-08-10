@@ -61,8 +61,6 @@ class DownloadWorker(QThread):
 
     def run(self):
         op = self.options
-        template = "%(title)s.%(ext)s"
-        dl_format = download_type_formats.get(op["download_type"])
 
         try:
             # extract info to check some details, like if this is a playlist
@@ -74,12 +72,13 @@ class DownloadWorker(QThread):
             self.finish_signal.emit(1, False)
             return
 
+        template = "%(title)s.%(ext)s"
         if bool(info.get("_type") == "playlist" or "entries" in info):
-            template = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+            template = "%(playlist)s/%(title)s.%(ext)s"
             self.is_playlist = True
 
         metadata = op.get("download_metadata")
-        # metadata gets added to audios only to save performance,
+        # metadata gets added to audios exclusively, to save performance.
         # i don't see the benefit of adding it to video.
         if metadata and op["download_type"] == DownloadType["audio"]:
             postprocessors_for_metadata = [
@@ -116,6 +115,7 @@ class DownloadWorker(QThread):
         else:
             postprocessors_for_metadata = []
 
+        dl_format = download_type_formats.get(op["download_type"])
         with YoutubeDL(
             params={
                 "format": dl_format,
