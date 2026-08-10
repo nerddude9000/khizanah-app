@@ -28,12 +28,16 @@ class MainWindow(QMainWindow):
 
     def setup_app(self):
         self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
+        self.ui.metadataCheck.clicked.connect(lambda: self.on_metadata_checked())
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
         self.ui.downloadButton.clicked.connect(lambda: self.start_download())
-        self.ui.progressBar.hide()  # will get shown on first download
         self.ui.footerLabel.setText(
             f'<a href="https://github.com/nerddude9000/khizanah-app" style="white-space: pre-line; color: gray; text-decoration: none;">هذا التطبيق مجاني تماما. التزموا حدود الله في استخدامه.\nالإصدار {VERSION}</a>'
         )
+
+        self.ui.progressBar.hide()  # will get shown on first download
+        self.ui.metadataTitleInput.hide()  # < these get shown if metadataCheckbox is checked
+        self.ui.metadataAuthorInput.hide()  # <
 
         if not IS_DEBUG:
             self.load_config()
@@ -180,6 +184,17 @@ class MainWindow(QMainWindow):
             self.ui.pathLabel.setText(folder)
             self.config["preferences"] = {"download_path": folder}
             self.save_config()
+
+    def on_metadata_checked(self):
+        is_checked = self.ui.metadataCheck.isChecked()
+        if is_checked:
+            self.ui.metadataAuthorInput.show()
+            self.ui.metadataTitleInput.show()
+        else:
+            self.ui.metadataAuthorInput.hide()
+            self.ui.metadataTitleInput.hide()
+
+        # TODO: save
 
     def open_download_path(self):
         download_path = self.config.get("preferences", "download_path", fallback=None)
