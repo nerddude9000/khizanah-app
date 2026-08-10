@@ -1,3 +1,4 @@
+from PySide6.QtGui import QIcon
 import configparser
 import os
 import subprocess
@@ -13,7 +14,7 @@ from ydl import DownloadType, DownloadWorker
 IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
 CONFIG_PATH = "config.ini"
-VERSION = "1.0.0 تجريبي"
+VERSION = "2.0.0 (تجريبي)"
 
 
 class MainWindow(QMainWindow):
@@ -27,6 +28,7 @@ class MainWindow(QMainWindow):
         self.setup_app()
 
     def setup_app(self):
+        self.setWindowIcon(QIcon(resource_path("assets/icon.ico")))
         self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
         self.ui.metadataCheck.clicked.connect(lambda: self.on_metadata_checked())
         self.ui.openPathButton.clicked.connect(lambda: self.open_download_path())
@@ -48,7 +50,8 @@ class MainWindow(QMainWindow):
             "شروط الاستخدام",
             """أهلا بكم في تطبيق خزانة لتحميل المقاطع والصوتيات.
 
-لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو البدع، إلا إذا كنتم ستحذفونها أو تردون عليها ونحو ذلك.
+لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو بدع، إلا إذا كنتم ستحذفونها أو تردون عليها ونحو ذلك.
+
 ولا يقتصر المحذور على ما ذكرنا، ويُُرجع فيه لأهل العلم من أهل السنة.
 
 وفقنا الله وإياكم.""",
@@ -106,16 +109,23 @@ class MainWindow(QMainWindow):
 
         self.ui.infoLabel.setText(msg)
 
-    def on_finish_download(self, err_code: int):
+    def on_finish_download(self, err_code: int, is_playlist: bool):
         self.ui.downloadButton.setDisabled(False)
         self.is_downloading = False
 
         if err_code:
-            QMessageBox.critical(
-                self,
-                "هناك خلل",
-                "حدث خلل أثناء التحميل.\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.\n\nوقد يكون الخلل من اليوتيوب، فانتظروا قليلا قبل إعادة المحاولة.",
-            )
+            if is_playlist:
+                QMessageBox.critical(
+                    self,
+                    "هناك خلل",
+                    "حدث خلل أثناء بعض مقاطع القائمة.\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.\n\nقد يكون الخلل من اليوتيوب، فانتظروا قليلا قبل إعادة المحاولة لتحميل باقي المقاطع (ولن يعاد تحميل التي نجحت).",
+                )
+            else:
+                QMessageBox.critical(
+                    self,
+                    "هناك خلل",
+                    "حدث خلل أثناء التحميل.\nتأكدوا من الرابط الذي أدخلتموه، ومن الاتصال بالشبكة.\n\nوقد يكون الخلل من اليوتيوب، فانتظروا قليلا قبل إعادة المحاولة.",
+                )
             self.ui.progressBar.setValue(0)
             self.ui.progressBar.setTextVisible(False)
             self.ui.infoLabel.setText("حدث خلل.")
@@ -133,7 +143,7 @@ class MainWindow(QMainWindow):
         url = self.ui.urlInput.text()
 
         if len(url) == 0:
-            QMessageBox.question(
+            QMessageBox.warning(
                 self, "هناك خلل", "أدخلوا رابط المقطع أو قائمة التشغيل أولا."
             )
             return
@@ -141,7 +151,7 @@ class MainWindow(QMainWindow):
         download_path = self.config.get("preferences", "download_path", fallback=None)
 
         if not download_path:
-            QMessageBox.question(
+            QMessageBox.warning(
                 self,
                 "هناك خلل",
                 "مجلد الخزانة الذي اخترتموه غير صحيح، قم بتغييره أولا.",

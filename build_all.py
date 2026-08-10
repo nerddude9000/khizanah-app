@@ -24,6 +24,8 @@ if __name__ == "__main__":
             "--windowed",
             "--optimize",
             "2",
+            "--name",
+            "khizanah",
             "--icon",
             "./assets/icon.ico",
             "--add-data",

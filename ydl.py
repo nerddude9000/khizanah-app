@@ -32,9 +32,9 @@ FFMPEG_BINARY_PATH = resource_path(
 # progress elements to not show, and the app itself to freeze.
 #
 class DownloadWorker(QThread):
-    progress_signal = Signal(dict, bool)
-    finish_signal = Signal(int)
-    is_playlist = False
+    progress_signal = Signal(dict, bool) # progress_hooks_data, is_playlist
+    finish_signal = Signal(int, bool) # error_code, is_playlist
+    is_playlist: bool
 
     def __init__(
         self,
@@ -68,13 +68,18 @@ class DownloadWorker(QThread):
         template = "%(title)s.%(ext)s"
 
         try:
+            # extract info to check some details, like if this is a playlist
             info = self._extract_info()
-            if bool(info.get("_type") == "playlist" or "entries" in info):
-                template = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
-                self.is_playlist = True
         except:  # noqa: E722
-            self.finish_signal.emit(1)
+            # we probably don't want to continue if we couldn't even extract
+            # info, so we just finish with an error.
+            # and continuing without knowing if this is a playlist would be very bad for UX.
+            self.finish_signal.emit(1, False)
             return
+
+        if bool(info.get("_type") == "playlist" or "entries" in info):
+            template = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+            self.is_playlist = True
 
         with YoutubeDL(
             params={
@@ -89,9 +94,9 @@ class DownloadWorker(QThread):
         ) as dl:
             try:
                 error_code = dl.download([op["url"]])  # needs a list
-                self.finish_signal.emit(error_code)
+                self.finish_signal.emit(error_code, self.is_playlist)
             except:  # noqa: E722
-                self.finish_signal.emit(1)
+                self.finish_signal.emit(1, self.is_playlist)
 
     def _hook(self, data):
         self.progress_signal.emit(data, self.is_playlist)
