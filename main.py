@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
 
         self.ui.progressBar.hide()  # will get shown on first download
 
-        if not self.config["metadata_checked"]:
+        if not self.config.get("metadata_checked"):
             self.ui.metadataTitleInput.hide()
             self.ui.metadataAuthorInput.hide()
 
@@ -65,8 +65,8 @@ class MainWindow(QMainWindow):
         )
 
     def on_download_progress(self, d, is_playlist):
-        status = d["status"]
-        info = d["info_dict"]
+        status = d.get("status")
+        info = d.get("info_dict")
         msg = self.ui.infoLabel.text()
 
         if status == "finished":
@@ -78,14 +78,14 @@ class MainWindow(QMainWindow):
 
         elif status == "downloading":
             try:
-                progress_percentage = round(
-                    (d["downloaded_bytes"] / d["total_bytes"]) * 100
-                )
-                speed_bytes_per_sec = d.get("speed")
-                eta = d.get("eta")
+                downloaded_bytes = d.get("downloaded_bytes")
+                total_bytes = d.get("total_bytes")
 
-                self.ui.progressBar.setTextVisible(True)
-                self.ui.progressBar.setValue(progress_percentage)
+                if downloaded_bytes and total_bytes:
+                    progress_percentage = round((downloaded_bytes / total_bytes) * 100)
+
+                    self.ui.progressBar.setTextVisible(True)
+                    self.ui.progressBar.setValue(progress_percentage)
 
                 if is_playlist:
                     current = info.get("playlist_index")
@@ -95,17 +95,19 @@ class MainWindow(QMainWindow):
                 else:
                     msg = "جاري التحميل..."
 
+                speed_bytes_per_sec = d.get("speed")
                 if speed_bytes_per_sec:
                     speed_Mbytes_per_sec = round(
                         (float(speed_bytes_per_sec) / 1024) / 1024, 2
                     )
                     msg += f"  {speed_Mbytes_per_sec} مب/ث"
 
+                eta = d.get("eta")
                 if eta:
                     eta_str = time.strftime("%M:%S", time.gmtime(eta))
                     msg += f"  تبقى: {eta_str}"
 
-            except:  # noqa: E722
+            except:  # noqa: E722 # shouldn't even reach but i'm keeping it
                 self.ui.progressBar.setTextVisible(False)
                 self.ui.progressBar.setValue(0)
                 msg = "جاري التحميل... (لم نستطع استخراج مدى اكتمال التحميل)."
