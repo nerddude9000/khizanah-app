@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>475</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>750</width>
-    <height>475</height>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>750</width>
-    <height>475</height>
+    <height>500</height>
    </size>
   </property>
   <property name="font">
@@ -44,7 +44,7 @@
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>475</height>
+     <height>500</height>
     </size>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -103,7 +103,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="spacing">
-           <number>10</number>
+           <number>16</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -319,96 +319,96 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>14</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>مجلد الخزانة:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="pathLabel">
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <fontweight>Light</fontweight>
-               </font>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="changePathButton">
-              <property name="maximumSize">
-               <size>
-                <width>60</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="cursor">
-               <cursorShape>ArrowCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string>تغيير</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="openPathButton">
-              <property name="maximumSize">
-               <size>
-                <width>45</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="cursor">
-               <cursorShape>ArrowCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string>فتح</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <property name="spacing">
-             <number>4</number>
+             <number>3</number>
             </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="maximumSize">
+                 <size>
+                  <width>110</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <bold>false</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>مجلد الخزانة:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="pathLabel">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <fontweight>Light</fontweight>
+                 </font>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="changePathButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>60</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <bold>false</bold>
+                 </font>
+                </property>
+                <property name="cursor">
+                 <cursorShape>ArrowCursor</cursorShape>
+                </property>
+                <property name="text">
+                 <string>تغيير</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="openPathButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>45</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <bold>false</bold>
+                 </font>
+                </property>
+                <property name="cursor">
+                 <cursorShape>ArrowCursor</cursorShape>
+                </property>
+                <property name="text">
+                 <string>فتح</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
             <item>
              <widget class="QPushButton" name="downloadButton">
               <property name="minimumSize">
@@ -534,9 +534,9 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>8</pointsize>
             <italic>false</italic>
-            <bold>true</bold>
+            <fontweight>DemiBold</fontweight>
            </font>
           </property>
           <property name="text">
