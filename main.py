@@ -17,11 +17,13 @@ VERSION = "2.0.0 (تجريبي)"
 
 # TODO: add logging?
 class MainWindow(QMainWindow):
-    is_downloading = False
-
     def __init__(self):
         super().__init__()
+
         self.config = {}
+        self.is_downloading = False
+        self.should_show_first_time_popup = False
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_app()
@@ -48,19 +50,6 @@ class MainWindow(QMainWindow):
         if not self.config.get("metadata_checked"):
             self.ui.metadataTitleInput.hide()
             self.ui.metadataAuthorInput.hide()
-
-    def show_initial_load_popup(self):
-        QMessageBox.information(
-            self,
-            "شروط الاستخدام",
-            """أهلا بكم في تطبيق خزانة لتحميل المقاطع والصوتيات.
-
-لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو بدع.
-
-ولا يقتصر المحذور على ما ذكرنا، ويُُرجع فيه لأهل العلم من أهل السنة.
-
-وفقنا الله وإياكم.""",
-        )
 
     def on_download_progress(self, d, is_playlist):
         status = d.get("status")
@@ -143,6 +132,9 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "تمت العملية بنجاح", "انتهى التحميل بنجاح.")
 
     def start_download(self):
+        if self.is_downloading:
+            return
+
         url = self.ui.urlInput.text()
 
         if len(url) == 0:
@@ -160,7 +152,6 @@ class MainWindow(QMainWindow):
                 "مجلد الخزانة الذي اخترتموه غير صحيح، قم بتغييره أولا.",
             )
             return
-        
 
         # Set download_type based on selected ui radio
         download_type: DownloadType
@@ -187,9 +178,7 @@ class MainWindow(QMainWindow):
         else:
             download_metadata = None
 
-        if self.is_downloading:
-            return
-
+        # checks done, start downloading
         self.is_downloading = True
 
         # We must use self to prevent it from being garbage collected
@@ -253,16 +242,13 @@ class MainWindow(QMainWindow):
             os.startfile(download_path)
 
     def save_config(self):
-        if IS_DEBUG:
-            return
-
         with open("config.json", "w", encoding="utf-8") as f:
             json.dump(self.config, f)
 
     def load_config(self):
         if not os.path.exists("config.json"):
             # file doesn't exist (it should get created later in save_config)
-            self.show_initial_load_popup()
+            self.should_show_first_time_popup = True
             return
 
         with open("config.json", "r", encoding="utf-8") as f:
@@ -307,5 +293,18 @@ if __name__ == "__main__":
 
     window = MainWindow()
     window.show()
+
+    if window.should_show_first_time_popup:
+        QMessageBox.information(
+            window,
+            "شروط الاستخدام",
+            """أهلا بكم في تطبيق خزانة لتحميل المقاطع والصوتيات.
+
+لا نحلّ لأحد استخدام هذا التطبيق في أي محذور شرعي، كتحميل الموسيقى أو مقاطع فيها تبرج أو بدع.
+
+ولا يقتصر المحذور على ما ذكرنا، ويُُرجع فيه لأهل العلم من أهل السنة.
+
+وفقنا الله وإياكم.""",
+        )
 
     app.exec()
