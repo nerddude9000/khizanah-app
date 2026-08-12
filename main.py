@@ -15,7 +15,6 @@ CONFIG_PATH = "config.json"
 VERSION = "2.0.0 (تجريبي)"
 
 
-# TODO: add logging?
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -213,7 +212,12 @@ class MainWindow(QMainWindow):
         self.worker.start()
 
     def toggle_all_inputs(self, disabled: bool):
+        self.ui.urlInput.setDisabled(disabled)
         self.ui.downloadButton.setDisabled(disabled)
+        self.ui.changePathButton.setDisabled(disabled)
+        self.ui.downloadModeRadio_720p.setDisabled(disabled)
+        self.ui.downloadModeRadio_Audio.setDisabled(disabled)
+        self.ui.downloadModeRadio_Best.setDisabled(disabled)
         self.ui.metadataCheck.setDisabled(disabled)
         self.ui.metadataTitleInput.setDisabled(disabled)
         self.ui.metadataAuthorInput.setDisabled(disabled)
