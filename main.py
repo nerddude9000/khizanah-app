@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 
-from PySide6.QtGui import QFont, QFontDatabase, QIcon
+from PySide6.QtGui import QCloseEvent, QFont, QFontDatabase, QIcon
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from ui_mainwindow import Ui_MainWindow
@@ -11,7 +11,7 @@ from utils import resource_path
 from ydl import DownloadType, DownloadWorker
 
 IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
-CONFIG_PATH = "config.ini"
+CONFIG_PATH = "config.json"
 VERSION = "2.0.0 (تجريبي)"
 
 
@@ -27,6 +27,20 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_app()
+
+    def closeEvent(self, event: QCloseEvent):
+        if self.is_downloading:
+            reply = QMessageBox.question(
+                self,
+                "إغلاق التطبيق",
+                "هل أنت متأكد من إغلاق تطبيق خزانة؟ لا يزال هناك تحميل قائم.",
+            )
+
+            if reply == QMessageBox.StandardButton.No:
+                return event.ignore()
+
+        self.save_config()
+        return super().closeEvent(event)
 
     def setup_app(self):
         self.load_config()
@@ -209,7 +223,6 @@ class MainWindow(QMainWindow):
         if folder:
             self.ui.pathLabel.setText(folder)
             self.config["download_path"] = folder
-            self.save_config()
 
     def on_metadata_update(self):
         is_checked = self.ui.metadataCheck.isChecked()
@@ -223,7 +236,6 @@ class MainWindow(QMainWindow):
         self.config["metadata_checked"] = is_checked
         self.config["metadata_author"] = self.ui.metadataAuthorInput.text()
         self.config["metadata_title"] = self.ui.metadataTitleInput.text()
-        self.save_config()
 
     def open_download_path(self):
         download_path = self.config.get("download_path")
@@ -242,16 +254,16 @@ class MainWindow(QMainWindow):
             os.startfile(download_path)
 
     def save_config(self):
-        with open("config.json", "w", encoding="utf-8") as f:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
             json.dump(self.config, f)
 
     def load_config(self):
-        if not os.path.exists("config.json"):
+        if not os.path.exists(CONFIG_PATH):
             # file doesn't exist (it should get created later in save_config)
             self.should_show_first_time_popup = True
             return
 
-        with open("config.json", "r", encoding="utf-8") as f:
+        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
             self.config = json.load(f)
 
         loaded_download_path = self.config.get("download_path")
