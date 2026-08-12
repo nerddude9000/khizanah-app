@@ -13,7 +13,7 @@ DownloadType = Enum("DownloadType", ["audio", "720p", "best"])
 # refer to yt-dlp format docs for more information
 download_type_formats: dict[DownloadType, str] = {
     DownloadType["audio"]: "139/ba/m4a",
-    DownloadType["720p"]: "bv[height=720]+(139/ba/m4a)",
+    DownloadType["720p"]: "bv[height<=720]+(139/ba/m4a)",
     DownloadType["best"]: "bv+ba",
 }
 
@@ -126,6 +126,7 @@ class DownloadWorker(QThread):
                     "only_download" if self.is_playlist else False
                 ),
                 "postprocessors": postprocessors_for_metadata,
+                "concurrent_fragment_downloads": 4,
             }
         ) as dl:
             try:
