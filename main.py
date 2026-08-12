@@ -10,7 +10,6 @@ from ui_mainwindow import Ui_MainWindow
 from utils import resource_path
 from ydl import DownloadType, DownloadWorker
 
-IS_DEBUG = os.getenv("DEBUG", "false") == "true"
 IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
 CONFIG_PATH = "config.ini"
 VERSION = "2.0.0 (تجريبي)"
@@ -28,9 +27,7 @@ class MainWindow(QMainWindow):
         self.setup_app()
 
     def setup_app(self):
-        if not IS_DEBUG:
-            self.load_config()
-
+        self.load_config()
         self.setWindowIcon(QIcon(resource_path("assets/icon.ico")))
         self.ui.changePathButton.clicked.connect(lambda: self.update_download_path())
         self.ui.metadataCheck.clicked.connect(lambda: self.on_metadata_update())
@@ -146,10 +143,6 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "تمت العملية بنجاح", "انتهى التحميل بنجاح.")
 
     def start_download(self):
-        if self.is_downloading:
-            return
-
-        self.is_downloading = True
         url = self.ui.urlInput.text()
 
         if len(url) == 0:
@@ -167,6 +160,7 @@ class MainWindow(QMainWindow):
                 "مجلد الخزانة الذي اخترتموه غير صحيح، قم بتغييره أولا.",
             )
             return
+        
 
         # Set download_type based on selected ui radio
         download_type: DownloadType
@@ -192,6 +186,11 @@ class MainWindow(QMainWindow):
 
         else:
             download_metadata = None
+
+        if self.is_downloading:
+            return
+
+        self.is_downloading = True
 
         # We must use self to prevent it from being garbage collected
         self.worker = DownloadWorker(
