@@ -4,7 +4,6 @@ from enum import Enum
 
 import yt_dlp
 from PySide6.QtCore import QThread, Signal
-from yt_dlp import YoutubeDL
 from yt_dlp.postprocessor.metadataparser import MetadataParserPP
 
 from utils import resource_path
@@ -116,11 +115,11 @@ class DownloadWorker(QThread):
             postprocessors_for_metadata = []
 
         dl_format = download_type_formats.get(op["download_type"])
-        with YoutubeDL(
+        with yt_dlp.YoutubeDL(
             params={
                 "format": dl_format,
                 "outtmpl": os.path.join(op["download_path"], template),
-                "progress_hooks": [self._hook],
+                "progress_hooks": [self._progress_hook],
                 "ffmpeg_location": FFMPEG_BINARY_PATH,
                 "ignoreerrors": (  # force stop when single video download fails, don't on playlists
                     "only_download" if self.is_playlist else False
@@ -132,8 +131,15 @@ class DownloadWorker(QThread):
             try:
                 error_code = dl.download([op["url"]])  # needs a list
                 self.finish_signal.emit(error_code, self.is_playlist)
-            except:  # noqa: E722
+            except yt_dlp.utils.DownloadCancelled:
+                pass # do nothing
+            except Exception as e:  
                 self.finish_signal.emit(1, self.is_playlist)
 
-    def _hook(self, data):
+    def _progress_hook(self, data):
+        if self.isInterruptionRequested():
+            raise yt_dlp.utils.DownloadCancelled
         self.progress_signal.emit(data, self.is_playlist)
+
+    def stop(self):
+        self.requestInterruption()

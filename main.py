@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
         self.config = {}
         self.is_downloading = False
         self.should_show_first_time_popup = False
+        self.worker: DownloadWorker | None = None
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -39,6 +40,10 @@ class MainWindow(QMainWindow):
                 return event.ignore()
 
         self.save_config()
+        if self.worker:
+            self.worker.stop()
+            self.worker.wait()
+
         return super().closeEvent(event)
 
     def setup_app(self):
