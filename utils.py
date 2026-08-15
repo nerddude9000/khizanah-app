@@ -12,3 +12,9 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
+
+# also works for B/s to MB/s
+def bytes_to_mega_bytes(n: float, ndigits: int = 2) -> float:
+    n = float(n)  # convert just in case
+    return round((n / 1024) / 1024, ndigits)

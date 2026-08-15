@@ -7,7 +7,7 @@ from PySide6.QtGui import QCloseEvent, QFont, QFontDatabase, QIcon
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from ui_mainwindow import Ui_MainWindow
-from utils import resource_path
+from utils import bytes_to_mega_bytes, resource_path
 from ydl import DownloadType, DownloadWorker
 
 IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
@@ -74,52 +74,49 @@ class MainWindow(QMainWindow):
         info = d.get("info_dict")
         msg = self.ui.infoLabel.text()
 
-        if status == "finished":
-            # This does NOT mean that the entire download is finished, only fragments.
-            pass
-
-        elif status == "error":
+        if status == "error":
             msg = "حدث خلل أثناء التحميل."
 
         elif status == "downloading":
+            msg: str = "جاري التحميل..."
             try:
+                if is_playlist:
+                    playlist_index = info.get("playlist_index")
+                    playlist_count = info.get("playlist_count")
+                    if playlist_index and playlist_count:
+                        msg = f"جاري تحميل القائمة ({playlist_index} من {playlist_count})..."
+                    else:
+                        msg = "جاري تحميل القائمة..."
+
                 downloaded_bytes = d.get("downloaded_bytes")
                 total_bytes = d.get("total_bytes")
-
                 if downloaded_bytes and total_bytes:
                     progress_percentage = round((downloaded_bytes / total_bytes) * 100)
 
                     self.ui.progressBar.setTextVisible(True)
                     self.ui.progressBar.setValue(progress_percentage)
 
-                if is_playlist:
-                    current = info.get("playlist_index")
-                    total = info.get("playlist_count")
-
-                    msg = f"جاري تحميل القائمة... ({current} من {total})"
-                else:
-                    msg = "جاري التحميل..."
+                    downloaded_Mbytes = bytes_to_mega_bytes(downloaded_bytes)
+                    total_Mbytes = bytes_to_mega_bytes(total_bytes)
+                    msg += f" | {total_Mbytes}/{downloaded_Mbytes} مب"  # reversed because RTL
 
                 speed_bytes_per_sec = d.get("speed")
                 if speed_bytes_per_sec:
-                    speed_Mbytes_per_sec = round(
-                        (float(speed_bytes_per_sec) / 1024) / 1024, 2
-                    )
-                    msg += f"  {speed_Mbytes_per_sec} مب/ث"
+                    speed_Mbytes_per_sec = bytes_to_mega_bytes(speed_bytes_per_sec)
+                    msg += f" | {speed_Mbytes_per_sec} مب/ث"
 
                 eta = d.get("eta")
                 if eta:
                     eta_str = time.strftime("%M:%S", time.gmtime(eta))
-                    msg += f"  تبقى: {eta_str}"
+                    msg += f" | تبقى: {eta_str}"
 
             except:  # noqa: E722 # shouldn't even reach but i'm keeping it
                 self.ui.progressBar.setTextVisible(False)
                 self.ui.progressBar.setValue(0)
                 msg = "جاري التحميل... (لم نستطع استخراج مدى اكتمال التحميل)."
 
-            finally:
-                if info.get("title"):
-                    msg += f"\n{info.get("title")}"
+        if info.get("title"):
+            msg += f"\n{info.get("title")}"
 
         self.ui.infoLabel.setText(msg)
 
