@@ -12,7 +12,7 @@ from ydl import DownloadType, DownloadWorker
 
 IS_LINUX = os.name == "posix"  # NOTE: macos isn't supported
 CONFIG_PATH = "config.json"
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 
 
 class MainWindow(QMainWindow):
