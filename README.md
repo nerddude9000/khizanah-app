@@ -2,6 +2,10 @@
 
 تطبيق لأجهزة الحاسوب (وينداوز و لينيكس) لتحميل المقاطع من اليوتيوب، على هيئةٍ صوتيةٍ أو فيديو، مفردةً كانت أو قوائم تشغيل، ويقوم بترتيبها تلقائيًا في المجلد الذي يختاره المستخدم.
 
+[تحميل نسخة الوينداوز](https://github.com/chakram9000/khizanah-app/releases/download/v2.0.0/khizanah.exe)
+
+[تحميل نسخة لينكس](https://github.com/chakram9000/khizanah-app/releases/download/v2.0.0/khizanah-linux)
+
 <img width="940" height="664" alt="image" src="https://github.com/user-attachments/assets/8d4730e1-b828-4deb-8ad5-fb06fcad4ac9" />
 
 <img width="1127" height="883" alt="image" src="https://github.com/user-attachments/assets/99ad77ac-9677-4862-b825-851dd5725887" />
