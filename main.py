@@ -78,7 +78,7 @@ class MainWindow(QMainWindow):
             msg = "حدث خلل أثناء التحميل."
 
         elif status == "downloading":
-            msg: str = "جاري التحميل..."
+            msg = "جاري التحميل..."
             try:
                 if is_playlist:
                     playlist_index = info.get("playlist_index")
@@ -110,13 +110,14 @@ class MainWindow(QMainWindow):
                     eta_str = time.strftime("%M:%S", time.gmtime(eta))
                     msg += f" | تبقى: {eta_str}"
 
+                title = info.get("title")
+                if title:
+                    msg += f"\n{title}"
+
             except:  # noqa: E722 # shouldn't even reach but i'm keeping it
                 self.ui.progressBar.setTextVisible(False)
                 self.ui.progressBar.setValue(0)
                 msg = "جاري التحميل... (لم نستطع استخراج مدى اكتمال التحميل)."
-
-        if info.get("title"):
-            msg += f"\n{info.get("title")}"
 
         self.ui.infoLabel.setText(msg)
 
